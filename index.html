@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karan Raghuvanshi - CV en ligne</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 960px;
+        }
+        .section-header {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .job-card {
+            border-left: 3px solid #60a5fa;
+            padding-left: 1.5rem;
+        }
+        .skill-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .skill-item {
+            background-color: #e0f2fe;
+            color: #1e40af;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- Indicateur de chargement -->
+    <div id="loading" class="text-center text-gray-500 font-semibold text-lg p-8">
+        Chargement...
+    </div>
+
+    <!-- Contenu principal -->
+    <div id="main-content" class="hidden">
+        
+        <div class="fixed top-4 right-4 z-50">
+            <button id="editBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                Modifier
+            </button>
+        </div>
+
+        <!-- Section Profil -->
+        <section class="card p-6 mb-8 flex flex-col md:flex-row items-center md:items-start text-center md:text-left">
+            <div class="md:mr-8 mb-4 md:mb-0">
+                <div class="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+                    <span class="text-4xl text-gray-500 font-bold">KR</span>
+                </div>
+            </div>
+            <div>
+                <h1 id="profile-name" class="text-3xl sm:text-4xl font-extrabold text-blue-600 mb-1"></h1>
+                <p id="profile-title" class="text-xl sm:text-2xl font-light text-gray-600 mb-4"></p>
+                <p id="profile-summary" class="text-sm sm:text-base text-gray-700 leading-relaxed max-w-2xl mx-auto md:mx-0"></p>
+            </div>
+        </section>
+        
+        <div id="edit-form" class="card p-6 mb-8 hidden">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Modifier le Profil</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="edit-name" class="block text-sm font-medium text-gray-700">Nom</label>
+                    <input type="text" id="edit-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                </div>
+                <div>
+                    <label for="edit-title" class="block text-sm font-medium text-gray-700">Titre</label>
+                    <input type="text" id="edit-title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                </div>
+                <div>
+                    <label for="edit-summary" class="block text-sm font-medium text-gray-700">Résumé</label>
+                    <textarea id="edit-summary" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"></textarea>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="saveBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                        Sauvegarder
+                    </button>
+                    <button id="cancelBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                        Annuler
+                    </button>
+                    <button id="improveBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                        Améliorer le résumé ✨
+                    </button>
+                </div>
+                <div id="api-status" class="text-sm text-gray-500 mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Section Contact & Détails Personnels -->
+        <section class="card p-6 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 mb-2">Contact</h2>
+                <ul id="contact-list" class="text-sm text-gray-600 space-y-1"></ul>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 mb-2">Langues</h2>
+                <ul id="languages-list" class="text-sm text-gray-600 space-y-1"></ul>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-gray-700 mb-2">Centres d'intérêt</h2>
+                <ul id="interests-list" class="text-sm text-gray-600 space-y-1"></ul>
+            </div>
+        </section>
+
+        <!-- Section Expérience Professionnelle -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold section-header">Expérience Professionnelle</h2>
+            <div id="experience-list" class="space-y-6"></div>
+        </section>
+
+        <!-- Section Compétences -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold section-header">Compétences</h2>
+            <div class="card p-6">
+                <div id="skills-list"></div>
+            </div>
+        </section>
+
+        <!-- Section Diplômes -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold section-header">Diplômes</h2>
+            <div id="education-list" class="card p-6 space-y-4"></div>
+        </section>
+        
+        <!-- Affichage de l'ID utilisateur pour le partage -->
+        <div class="text-center text-gray-500 text-xs mt-8">
+            <p>Votre identifiant unique de CV pour l'édition :</p>
+            <p id="userIdDisplay" class="font-mono text-gray-700 break-all"></p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    // Imports Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Variables globales
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    // Éléments de l'interface utilisateur
+    const loadingEl = document.getElementById('loading');
+    const mainContentEl = document.getElementById('main-content');
+    const userIdDisplayEl = document.getElementById('userIdDisplay');
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const improveBtn = document.getElementById('improveBtn');
+    const editForm = document.getElementById('edit-form');
+    const profileNameEl = document.getElementById('profile-name');
+    const profileTitleEl = document.getElementById('profile-title');
+    const profileSummaryEl = document.getElementById('profile-summary');
+    const editNameInput = document.getElementById('edit-name');
+    const editTitleInput = document.getElementById('edit-title');
+    const editSummaryInput = document.getElementById('edit-summary');
+    const apiStatusEl = document.getElementById('api-status');
+
+    // Instances Firestore et Auth
+    let db, auth, userId;
+
+    // Données de CV par défaut
+    const defaultData = {
+        profile: {
+            name: "KARAN RAGHUVANSHI",
+            title: "Consultant Informatique",
+            summary: "Double diplômé : Master SI - Paris 1 Sorbonne & Master Management de Projet - SKEMA. Consultant en Management des SI avec +7 ans d'expérience multi-sectorielle (banque, assurance, automobile). Passionné par le pilotage de projets complexes, l'optimisation de la performance (Power BI, méthodes Agile) et l'accompagnement au changement. Engagé, proactif et orienté résultats, je transforme les idées en solutions concrètes !"
+        },
+        contact: {
+            email: "ikaraghuvanshi@gmail.com",
+            phone: "+33 7 84 95 33 43",
+            location: "89 av. Jean Jaurès, Belfort (90000), France"
+        },
+        langues: [
+            { name: "Français" },
+            { name: "Anglais" },
+            { name: "Hindi" }
+        ],
+        interests: [
+            "Data Visualisation", "Randonnée", "Badminton", "Voyages culturels"
+        ],
+        experience: [
+            { title: "Conseiller en Gestion de Trésorerie", company: "CACIB Montigny-le-Bretonneux", dates: "Août 2023 - Avril 2024", tasks: ["Optimisation cash management : +15% d'efficacité, analyse flux financiers SWIFT/SEPA", "Surveillance quotidienne des entrées/sorties de fonds.", "Réconciliation des transactions front-office vs back-office"] },
+            { title: "Consultant Informatique et Recherche", company: "Capgemini Technology Services Issy-les-Moulineaux", dates: "Juin 2018 - Avril 2024", tasks: ["Pilotage financier : +23% de conformité KPI projets via e-monitoring", "Collaboration avec des professionnels de la post-doctrine pour définir une structure et les aider dans leurs recherches sur l'IA dans les réseaux à Capgemini Invent", "Déploiement Power BI/VBA pour le suivi de performance projets IA & véhicules autonomes"] },
+            { title: "Conseiller en Gestion de Trésorerie", company: "Société Générale Val de Fontenay", dates: "Janvier 2021 - Décembre 2021", tasks: ["Modernisation des processus de cash management : -6% de délais, formation de 6 recrues"] },
+            { title: "Chef de Projet Sécurité IT", company: "AXA Group Operations Paris", dates: "Juin 2019 - Décembre 2019", tasks: ["Suivi risques ISO 27001 & budget multi-filiales : objectifs sécurité atteints pour toutes les entités T3"] },
+            { title: "Assistant PMO et Data Analyst", company: "Nissan Automotive Europe Montigny-le-Bretonneux", dates: "Juin 2018 - Mars 2019", tasks: ["Conduite du changement WLTP : coordination multi-équipes pour conformité réglementaire CO2 UE", "Rédaction de procédures harmonisées & tests qualité, UAT, nouvelles bases de données"] },
+            { title: "AMOA et Conception Sécurité IT", company: "Air France KLM Paray Vieille Poste", dates: "Février 2017 - Octobre 2017", tasks: ["UX Design & gouvernance ISO 27001 : spécifications fonctionnelles, wireframes, KPI cybersécurité", "Plateforme Selfcare pour appui utilisateur (SharePoint, Marvel, Lucidchart)"] }
+        ],
+        competences: {
+            "Compétences clés": ["Agile", "Scrum", "PMBOK", "PRINCE2", "SAFE", "Power BI", "VBA", "SWIFT", "SEPA", "SharePoint"],
+            "Gestion de projet": ["Conception & gestion de projet", "Assurance qualité", "Gestion des risques", "Optimisation des processus", "Conduite du changement"],
+            "Outils": ["MS Project", "Clarity", "Primavera", "Lucidchart", "Marvel"]
+        },
+        diplomes: [
+            { degree: "Management des Systèmes d'Information", school: "Université Paris 1, Sorbonne", dates: "Septembre 2016 - Mars 2018" },
+            { degree: "Gestion de Projet et Programme", school: "SKEMA Business School", dates: "Mars 2013 - Juin 2015" }
+        ]
+    };
+
+    // Initialize Firebase and fetch data
+    async function initFirebaseAndFetchData() {
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+            
+            userId = auth.currentUser.uid;
+            userIdDisplayEl.textContent = userId;
+
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/cv/data`);
+
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                await setDoc(docRef, defaultData);
+            }
+
+            // Listen for real-time updates
+            onSnapshot(docRef, (doc) => {
+                const data = doc.data();
+                if (data) {
+                    renderCV(data);
+                }
+            });
+
+            loadingEl.classList.add('hidden');
+            mainContentEl.classList.remove('hidden');
+
+        } catch (error) {
+            console.error("Error initializing Firebase or fetching data:", error);
+            loadingEl.textContent = "Erreur de chargement des données. Veuillez vérifier la console pour plus de détails.";
+        }
+    }
+
+    // Fonction pour afficher les données du CV
+    function renderCV(data) {
+        // Afficher le profil
+        profileNameEl.textContent = data.profile.name;
+        profileTitleEl.textContent = data.profile.title;
+        profileSummaryEl.textContent = data.profile.summary;
+
+        // Afficher le contact
+        const contactList = document.getElementById('contact-list');
+        contactList.innerHTML = `
+            <li><strong class="font-semibold">Email:</strong> ${data.contact.email}</li>
+            <li><strong class="font-semibold">Téléphone:</strong> ${data.contact.phone}</li>
+            <li><strong class="font-semibold">Lieu:</strong> ${data.contact.location}</li>
+        `;
+
+        // Afficher les langues
+        const languagesList = document.getElementById('languages-list');
+        languagesList.innerHTML = data.langues.map(lang => `
+            <li>${lang.name}</li>
+        `).join('');
+
+        // Afficher les centres d'intérêt
+        const interestsList = document.getElementById('interests-list');
+        interestsList.innerHTML = data.interests.map(interest => `
+            <li>${interest}</li>
+        `).join('');
+
+        // Afficher l'expérience
+        const experienceList = document.getElementById('experience-list');
+        experienceList.innerHTML = data.experience.map(job => `
+            <div class="job-card card p-5 relative">
+                <h3 class="text-lg font-semibold text-gray-800">${job.title}</h3>
+                <p class="text-sm text-blue-600 font-medium">${job.company}</p>
+                <p class="text-xs text-gray-500 mb-2">${job.dates}</p>
+                <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 ml-4">
+                    ${job.tasks.map(task => `<li>${task}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+
+        // Afficher les compétences
+        const skillsList = document.getElementById('skills-list');
+        skillsList.innerHTML = Object.entries(data.competences).map(([category, items]) => `
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">${category}</h3>
+                <ul class="skill-list mb-4">
+                    ${items.map(skill => `<li class="skill-item">${skill}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+
+        // Afficher les diplômes
+        const educationList = document.getElementById('education-list');
+        educationList.innerHTML = data.diplomes.map(edu => `
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">${edu.degree}</h3>
+                <p class="text-sm text-blue-600 font-medium">${edu.school}</p>
+                <p class="text-xs text-gray-500">${edu.dates}</p>
+            </div>
+        `).join('');
+    }
+
+    // Écouteurs d'événements pour l'édition
+    editBtn.addEventListener('click', () => {
+        editForm.classList.remove('hidden');
+        editBtn.classList.add('hidden');
+        editNameInput.value = profileNameEl.textContent;
+        editTitleInput.value = profileTitleEl.textContent;
+        editSummaryInput.value = profileSummaryEl.textContent;
+    });
+
+    saveBtn.addEventListener('click', async () => {
+        try {
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/cv/data`);
+            await setDoc(docRef, {
+                profile: {
+                    name: editNameInput.value,
+                    title: editTitleInput.value,
+                    summary: editSummaryInput.value
+                },
+                // Remarque : Seules les données de profil sont modifiables pour l'instant. Vous devrez ajouter plus de champs au formulaire et à l'objet de données pour rendre d'autres sections modifiables.
+            }, { merge: true });
+            
+            editForm.classList.add('hidden');
+            editBtn.classList.remove('hidden');
+        } catch (error) {
+            console.error("Erreur lors de la sauvegarde des données :", error);
+        }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        editForm.classList.add('hidden');
+        editBtn.classList.remove('hidden');
+    });
+
+    improveBtn.addEventListener('click', async () => {
+        apiStatusEl.textContent = "Amélioration du résumé en cours...";
+        improveBtn.disabled = true;
+        try {
+            const currentSummary = editSummaryInput.value;
+            const payload = {
+                contents: [{
+                    parts: [{ text: `Agissez en tant que coach de carrière professionnel. Réécrivez le résumé de CV suivant pour qu'il soit plus percutant et concis. N'ajoutez pas de nouvelles informations. Ne retournez que le résumé amélioré.
+                    \n\nRésumé :\n${currentSummary}` }]
+                }],
+                tools: [{ "google_search": {} }],
+            };
+            const apiKey = ""
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Échec de l'appel API : ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            const improvedSummary = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (improvedSummary) {
+                editSummaryInput.value = improvedSummary;
+                apiStatusEl.textContent = "Résumé amélioré !";
+            } else {
+                apiStatusEl.textContent = "Impossible d'améliorer le résumé. Veuillez réessayer.";
+            }
+
+        } catch (error) {
+            console.error("Erreur lors de l'appel de l'API Gemini :", error);
+            apiStatusEl.textContent = `Erreur : ${error.message}`;
+        } finally {
+            improveBtn.disabled = false;
+        }
+    });
+
+    // Lancer l'application
+    initFirebaseAndFetchData();
+</script>
+
+</body>
+</html>
